@@ -1,5 +1,5 @@
 .idea
 config
 out
-weights.txt
-trainingErrors.txt
+*-weights.txt
+*-trainingErrors.txt

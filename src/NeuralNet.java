@@ -249,7 +249,7 @@ public class NeuralNet implements NeuralNetInterface {
 
     @Override
     public void load(String argFileName) throws IOException {
-        Scanner sc = new Scanner(new BufferedReader(new FileReader("./weights.txt")));
+        Scanner sc = new Scanner(new BufferedReader(new FileReader(argFileName)));
         double[][] w1 = new double[argNumInputs + 1][argNumHidden];
         double[][] w2 = new double[argNumHidden + 1][numOfOutputs];
         boolean readingW1 = true;
