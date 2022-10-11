@@ -15,14 +15,9 @@ public class Main {
         }
         epoch /= 100;
         System.out.println("average epoch " + epoch);
-        neuralNet.saveError();
+        neuralNet.saveError(new File("trainingErrors.txt"));
 
         neuralNet.save(new File("weights.txt"));
-        try {
-            neuralNet.load("weights.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
 
