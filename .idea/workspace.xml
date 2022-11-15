@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/LUT/IRobot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/robots/robot.database" beforeDir="false" afterPath="$PROJECT_DIR$/robots/robot.database" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/IRobot.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/LUTInterface.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/LogFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LogFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/LookUpTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LookUpTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/State.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,9 +38,9 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.gutterIcons" />
   </component>
   <component name="RunDashboard">
