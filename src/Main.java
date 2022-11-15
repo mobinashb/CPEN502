@@ -1,14 +1,15 @@
+import NN.NeuralNet;
+
 import java.io.File;
-import java.io.IOException;
 
 public class Main {
 
     public static void main(String[] args) {
         // part a
-//        NeuralNet neuralNet = new NeuralNet();
+//        NN.NeuralNet neuralNet = new NN.NeuralNet();
 //        neuralNet.setRepresentation(true);
         // part b
-//        NeuralNet neuralNet = new NeuralNet();
+//        NN.NeuralNet neuralNet = new NN.NeuralNet();
 //        neuralNet.setRepresentation(false);
         // part c
         NeuralNet neuralNet = new NeuralNet(2, 4, 1, 0.2, 0.9, -1, 1);
