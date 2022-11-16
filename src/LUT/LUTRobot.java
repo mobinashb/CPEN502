@@ -23,8 +23,8 @@ public class LUTRobot extends AdvancedRobot {
     public static final String fileToSaveLUT = LUTRobot.class.getSimpleName() + "-"  + "LUT";
     static LogFile log = new LogFile();
 
-    private int numTotalRounds = 0;
-    private int numWinRounds = 0;
+    private static int numTotalRounds = 0;
+    private static int numWinRounds = 0;
 
     private static final int ROUNDS_BATCH_SIZE = 100;
 
