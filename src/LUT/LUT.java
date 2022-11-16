@@ -1,15 +1,21 @@
 package LUT;
 
-public class LookUpTable {
+import Interfaces.LUTInterface;
+
+import java.io.File;
+import java.io.IOException;
+
+public class LUT implements LUTInterface {
     private double table[][];
 
-    public LookUpTable() {
-        this.table = new double[State.NumStates][Action.ROBOT_NUM_ACTIONS];
+    public LUT() {
+        this.table = new double[State.numStates][Action.ROBOT_NUM_ACTIONS];
         initializeLUT();
     }
 
+    @Override
     public void initializeLUT() {
-        for(int i=0; i<State.NumStates; i++) {
+        for(int i=0; i<State.numStates; i++) {
             for(int j=0; j<Action.ROBOT_NUM_ACTIONS; j++) {
                 table[i][j] = 0;
             }
@@ -42,5 +48,25 @@ public class LookUpTable {
             }
         }
         return action;
+    }
+
+    @Override
+    public double outputFor(double[] X) {
+        return 0;
+    }
+
+    @Override
+    public double train(double[] X, double argValue) {
+        return 0;
+    }
+
+    @Override
+    public void save(File argFile) {
+
+    }
+
+    @Override
+    public void load(String argFileName) throws IOException {
+
     }
 }

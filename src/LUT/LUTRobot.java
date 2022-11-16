@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import robocode.*;
 
-public class MyRobot extends AdvancedRobot {
+public class LUTRobot extends AdvancedRobot {
     private static final boolean ON_POLICY = true;
     private static final boolean INTERMEDIATE_REWARD = true;
     private static final boolean BASELINE_ROBOT= false;
@@ -21,8 +21,8 @@ public class MyRobot extends AdvancedRobot {
     private int isHitWall = 0;
     private ArrayList<Integer> scores = new ArrayList<>();
 
-    public static String fileToSaveName = MyRobot.class.getSimpleName() + "-"  + "winningRate"+ ".log";
-    public static String fileToSaveLUT = MyRobot.class.getSimpleName() + "-"  + "LUT";
+    public static String fileToSaveName = LUTRobot.class.getSimpleName() + "-"  + "winningRate"+ ".log";
+    public static String fileToSaveLUT = LUTRobot.class.getSimpleName() + "-"  + "LUT";
     static LogFile log = new LogFile();
 
     public void run() {

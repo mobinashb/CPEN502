@@ -3,11 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/robot.database" beforeDir="false" afterPath="$PROJECT_DIR$/robots/robot.database" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/IRobot.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LUTInterface.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LogFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LogFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LookUpTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LookUpTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/Action.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/Action.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/LearningAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LearningAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/LookUpTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LUT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/MyRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/MyRobot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LUT/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/State.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,6 +19,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>

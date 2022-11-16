@@ -12,7 +12,7 @@ import robocode.ScannedRobotEvent;
  *
  * @author Mathew A. Nelson (original)
  */
-public class FirstRobot extends Robot {
+public class BasicRobot extends Robot {
 
     /**
      * MyFirstRobot's run method - Seesaw

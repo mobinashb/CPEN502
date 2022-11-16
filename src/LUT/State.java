@@ -1,65 +1,68 @@
 package LUT;
 
 public class State {
-    public static final double TOTAL_ANGLE = 360.0;
-    public static final double CIRCLE = Math.PI * 2;
-    public static int NumStates;
-    public static final int NUM_DISTANCE = 10;
-    public static final int NUM_BREARING = 4;
-    public static final int NUM_HEADING = 4;
-    public static final int NUM_HIT_BY_BULLETS = 2;
-    public static final int NUM_HIT_WALL = 2;
-    public static final int NUM_ENERGY = 5;
+    public static int numStates;
+
+    public static final int numEnemyDistance = 10; //number of enemy distances
+    public static final int numEnemyDirection = 4; //number of enemy directions
+    public static final int numRobotDirection = 4; //number of robot directions
+    public static final int numHitByBullet = 2; //whether hit by bullet or not
+    public static final int numHitWall = 2; //whether hit wall or not
+    public static final int numEnergy = 5; //levels of robot energy
+
+    public static final double totalAngle = 360.0;
+    public static final double circle = Math.PI * 2;
+
     public static int states[][][][][][];
 
     static {
-        states = new int[NUM_DISTANCE][NUM_BREARING][NUM_HEADING][NUM_HIT_BY_BULLETS][NUM_HIT_WALL][NUM_ENERGY];
-        int cnt = 0;
-        for(int a=0; a<NUM_DISTANCE; a++) {
-            for(int b=0; b<NUM_BREARING; b++) {
-                for(int c=0; c<NUM_HEADING; c++) {
-                    for(int d=0; d<NUM_HIT_BY_BULLETS; d++) {
-                        for(int e=0; e<NUM_HIT_BY_BULLETS; e++) {
-                            for(int f=0; f<NUM_ENERGY; f++) {
-                                states[a][b][c][d][e][f] = cnt++;
+        states = new int[numEnemyDistance][numEnemyDirection][numRobotDirection][numHitByBullet][numHitWall][numEnergy];
+        int totalStates = 0;
+        for(int a = 0; a < numEnemyDistance; a++) {
+            for(int b = 0; b < numEnemyDirection; b++) {
+                for(int c = 0; c < numRobotDirection; c++) {
+                    for(int d = 0; d < numHitByBullet; d++) {
+                        for(int e = 0; e < numHitByBullet; e++) {
+                            for(int f = 0; f < numEnergy; f++) {
+                                states[a][b][c][d][e][f] = totalStates++;
                             }
                         }
                     }
                 }
             }
         }
-        NumStates = cnt;
-    }
-
-    public static int getDistance(double distance) {
-        int res = (int)(distance / 100.0);
-        return Math.min(NUM_DISTANCE-1, res);
+        numStates = totalStates;
     }
 
     public static int getHeading(double heading) {
-        double angle = TOTAL_ANGLE / NUM_HEADING;
+        double angle = totalAngle / numRobotDirection;
         double newHeading = heading+angle/2;
-        while (newHeading > TOTAL_ANGLE) {
-            newHeading-=TOTAL_ANGLE;
+        while (newHeading > totalAngle) {
+            newHeading-=totalAngle;
         }
-        return (int)(newHeading/angle);
+        return (int)(newHeading / angle);
     }
 
     public static int getBearing(double bearing) {
-        double angle=CIRCLE / NUM_BREARING;
+        double angle= circle / numEnemyDirection;
         double newBearing = bearing;
         if(bearing < 0) {
-            newBearing += CIRCLE;
+            newBearing += circle;
         }
         newBearing += angle / 2;
-        if(newBearing > CIRCLE) {
-            newBearing = newBearing - CIRCLE;
+        if(newBearing > circle) {
+            newBearing = newBearing - circle;
         }
         return (int) (newBearing / angle);
     }
 
+    public static int getDistance(double distance) {
+        int res = (int)(distance / 100.0);
+        return Math.min(numEnemyDistance-1, res);
+    }
+
     public static int getEnergyLevel(double energy) {
-        double levels = 100 / NUM_ENERGY;
-        return Math.min((int)(energy/levels), NUM_ENERGY-1);
+        double levels = 100 / numEnergy;
+        return Math.min((int)(energy/levels), numEnergy-1);
     }
 }
