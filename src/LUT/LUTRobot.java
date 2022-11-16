@@ -13,7 +13,7 @@ public class MyRobot extends AdvancedRobot {
     private static final boolean BASELINE_ROBOT= false;
     private static final double BASE_DISTANCE = 400.0;
     private Enemy enemy;
-    private static LookUpTable table;
+    private static LUT table;
     private LearningAgent agent;
     private double reward;
     private double firePower = 1;
@@ -27,7 +27,7 @@ public class MyRobot extends AdvancedRobot {
 
     public void run() {
         //state = new State();
-        table = new LookUpTable();
+        table = new LUT();
         agent = new LearningAgent(table);
         enemy = new Enemy("enemy");
         enemy.distance = 10000;
@@ -59,7 +59,7 @@ public class MyRobot extends AdvancedRobot {
             action = (int)(Math.random() * Action.ROBOT_NUM_ACTIONS);
         } else {
             int state = getState();
-            action= agent.getNextAction(state);
+            action = agent.getNextAction(state);
             agent.Learn(state, action, reward, ON_POLICY, INTERMEDIATE_REWARD);
             reward = 0.0;
             isHitByBullet = 0;
