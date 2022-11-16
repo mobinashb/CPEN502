@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/robocode.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/robocode.xml" afterDir="false" />
+    <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="merge files into one">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/robot.database" beforeDir="false" afterPath="$PROJECT_DIR$/robots/robot.database" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LUT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LUT.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LUT/LUTRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LUTRobot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LearningAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LearningAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/Statistics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/Statistics.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +64,14 @@
       <workItem from="1668471922216" duration="60000" />
       <workItem from="1668472140065" duration="32000" />
     </task>
+    <task id="LOCAL-00001" summary="merge files into one">
+      <created>1668590699013</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1668590699013</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -84,5 +87,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="merge files into one" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge files into one" />
   </component>
 </project>

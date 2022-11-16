@@ -166,11 +166,11 @@ public class LUTRobot extends AdvancedRobot {
     private void writeLog(boolean hasWon) {
         numTotalRounds++;
         numWinRounds += hasWon ? 1 : 0;
-        if ((numTotalRounds % ROUNDS_BATCH_SIZE == 0) && (numTotalRounds != 0)) {
+        if (numTotalRounds % ROUNDS_BATCH_SIZE == 0) {
             double winPercentage = (double) numWinRounds / 100;
             numWinRounds = 0;
             File folderDst = getDataFile(fileToSaveName);
-            log.writeToFile(folderDst, winPercentage, numTotalRounds);
+            log.writeToFile(folderDst, winPercentage, numTotalRounds / ROUNDS_BATCH_SIZE);
         }
     }
 
