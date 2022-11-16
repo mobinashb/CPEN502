@@ -14,21 +14,85 @@ public class LUTRobot extends AdvancedRobot {
     private static final double BASE_DISTANCE = 400.0;
     private Enemy enemy;
     private static LUT table;
-    private LearningAgent agent;
     private double reward;
     private double firePower = 1;
     private int isHitByBullet = 0;
     private int isHitWall = 0;
-    private ArrayList<Integer> scores = new ArrayList<>();
 
-    public static String fileToSaveName = LUTRobot.class.getSimpleName() + "-"  + "winningRate"+ ".log";
-    public static String fileToSaveLUT = LUTRobot.class.getSimpleName() + "-"  + "LUT";
+    public static final String fileToSaveName = LUTRobot.class.getSimpleName() + "-"  + "winningRate"+ ".log";
+    public static final String fileToSaveLUT = LUTRobot.class.getSimpleName() + "-"  + "LUT";
     static LogFile log = new LogFile();
+
+    private int numTotalRounds = 0;
+    private int numWinRounds = 0;
+
+    private static final int ROUNDS_BATCH_SIZE = 100;
+
+    public static final double learningRate = 0.2;
+    public static final double discountFactor = 0.9;
+    public static double epsilon = 0.9;
+
+    private static final int EPSILON_THRESHOLD = 8000;
+
+    private int prevState = -1;
+    private int prevAction = -1;
+    private boolean firstRound = true;
+    public ArrayList<String> finalStates = new ArrayList<>();
+
+    public void Learn(int currState, int currAction, double reward, boolean isOnPolicy, boolean isIntermidiateRewards) {
+        if(!isIntermidiateRewards) {
+            finalStates.add(currState+"-"+currAction);
+            return;
+        }
+        double newValue;
+        if(firstRound) {
+            firstRound = false;
+        } else {
+            double oldValue = table.getQValue(prevState, prevAction);
+            if(isOnPolicy) {
+                newValue = oldValue + learningRate * (reward + discountFactor * table.getQValue(currState, currAction)
+                        - oldValue);
+            } else {
+                newValue = oldValue + learningRate * (reward + discountFactor * table.getMaxValue(currState) - oldValue);
+            }
+            table.setQValue(prevState, prevAction, newValue);
+        }
+        prevState = currState;
+        prevAction = currAction;
+    }
+
+    public int getNextAction(int state) {
+        if (numTotalRounds > EPSILON_THRESHOLD) epsilon = 0.1;
+        double random = Math.random();
+        if(random < epsilon) {
+            return (int)(Math.random() * Action.ROBOT_NUM_ACTIONS);
+        }
+        return table.getBestAction(state);
+    }
+
+    public void feedReward(double value) {
+        int n = finalStates.size();
+        double currValue, nextValue;
+        String[] strs = finalStates.get(n-1).split("-");
+        int state = Integer.valueOf(strs[0]);
+        int action = Integer.valueOf(strs[1]);
+
+        table.setQValue(state, action, value);
+        nextValue = value;
+        for(int i=n-2; i>=0; i--) {
+            strs = finalStates.get(i).split("-");
+            state = Integer.valueOf(strs[0]);
+            action = Integer.valueOf(strs[1]);
+            currValue = table.getQValue(state, action);
+            currValue += learningRate * (discountFactor * nextValue - currValue);
+            table.setQValue(state, action, currValue);
+            nextValue = currValue;
+        }
+    }
 
     public void run() {
         //state = new State();
         table = new LUT();
-        agent = new LearningAgent(table);
         enemy = new Enemy("enemy");
         enemy.distance = 10000;
 
@@ -59,8 +123,8 @@ public class LUTRobot extends AdvancedRobot {
             action = (int)(Math.random() * Action.ROBOT_NUM_ACTIONS);
         } else {
             int state = getState();
-            action = agent.getNextAction(state);
-            agent.Learn(state, action, reward, ON_POLICY, INTERMEDIATE_REWARD);
+            action = getNextAction(state);
+            Learn(state, action, reward, ON_POLICY, INTERMEDIATE_REWARD);
             reward = 0.0;
             isHitByBullet = 0;
             isHitWall = 0;
@@ -97,6 +161,17 @@ public class LUTRobot extends AdvancedRobot {
         int distance = State.getDistance(enemy.distance);
         int energy = State.getEnergyLevel(getEnergy());
         return State.states[distance][bearing][heading][isHitByBullet][isHitWall][energy];
+    }
+
+    private void writeLog(boolean hasWon) {
+        numTotalRounds++;
+        numWinRounds += hasWon ? 1 : 0;
+        if ((numTotalRounds % ROUNDS_BATCH_SIZE == 0) && (numTotalRounds != 0)) {
+            double winPercentage = (double) numWinRounds / 100;
+            numWinRounds = 0;
+            File folderDst = getDataFile(fileToSaveName);
+            log.writeToFile(folderDst, winPercentage, numTotalRounds);
+        }
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
@@ -175,34 +250,27 @@ public class LUTRobot extends AdvancedRobot {
     }
 
     public void onDeath(DeathEvent event) {
-        scores.add(0);
-        Statistics.saveScore(0);
         if(BASELINE_ROBOT) {
             return;
         }
-        if(INTERMEDIATE_REWARD) {
+        writeLog(false);
+        if (INTERMEDIATE_REWARD) {
             reward -= 60;
         } else {
-            agent.feedReward(0);
+            feedReward(0);
         }
     }
 
     public void onWin(WinEvent event) {
-        //System.out.println("win! ");
-        //scores.saveScore(1);
-        Statistics.saveScore(1);
         if(BASELINE_ROBOT) {
             return;
         }
-        if(INTERMEDIATE_REWARD) {
+        writeLog(true);
+        if (INTERMEDIATE_REWARD) {
             reward += 60;
         } else {
-            agent.feedReward(1);
+            feedReward(1);
         }
     }
 
-    public void onBattleEnded(BattleEndedEvent event) {
-        File folderDst1 = getDataFile(fileToSaveName);
-        Statistics.printWinRates(log, folderDst1);
-    }
 }

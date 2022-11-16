@@ -17,7 +17,7 @@ public class LUT implements LUTInterface {
     public void initializeLUT() {
         for(int i=0; i<State.numStates; i++) {
             for(int j=0; j<Action.ROBOT_NUM_ACTIONS; j++) {
-                table[i][j] = 0;
+                table[i][j] = Math.random();
             }
         }
     }
@@ -39,7 +39,7 @@ public class LUT implements LUTInterface {
     }
 
     public int getBestAction(int state) {
-        double maxValue = -10;
+        double maxValue = -1000000;
         int action = 0;
         for(int i=0; i<Action.ROBOT_NUM_ACTIONS; i++) {
             if(table[state][i] > maxValue) {
