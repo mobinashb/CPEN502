@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="remove redundant condition in writeLog">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/robocode.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/robocode.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/robot.database" beforeDir="false" afterPath="$PROJECT_DIR$/robots/robot.database" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/Action.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/Action.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LUT/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/Enemy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LUT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LUT.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LUT/LUTRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LUTRobot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LearningAgent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LogFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LogFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/State.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUT/LogFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LUTLogger.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -88,7 +84,7 @@
       <updated>1668471920718</updated>
       <workItem from="1668471922216" duration="60000" />
       <workItem from="1668472140065" duration="32000" />
-      <workItem from="1668635978384" duration="14115000" />
+      <workItem from="1668635978384" duration="15013000" />
     </task>
     <task id="LOCAL-00001" summary="merge files into one">
       <created>1668590699013</created>

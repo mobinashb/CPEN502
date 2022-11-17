@@ -12,16 +12,17 @@ public class LUTRobot extends AdvancedRobot {
     private static final boolean INTERMEDIATE_REWARD = true;
     private static final boolean BASELINE_ROBOT= false;
     private static final double BASE_DISTANCE = 400.0;
+
     private Enemy enemy;
     private static LUT table = new LUT();
     private double reward;
-    private double firePower = 2;
+    private double firePower = 1;
     private int isHitByBullet = 0;
     private int isHitWall = 0;
 
     public static final String winningRateFile = LUTRobot.class.getSimpleName() + "-winningRate.log";
     public static final String LUTValueFile = LUTRobot.class.getSimpleName() + "-LUTValues.log";
-    static LogFile log = new LogFile();
+    static LUTLogger log = new LUTLogger();
 
     private static int numTotalRounds = 0;
     private static int numWinRounds = 0;
@@ -205,7 +206,7 @@ public class LUTRobot extends AdvancedRobot {
         for (int i=0; i<20; i++) {
             nextTime = (int)Math.round((getEuDistance(getX(),getY(),p.x,p.y) / (20 - (3 * firePower))));
             gaussTime = getTime() + nextTime - 10;
-            p = enemy.getNextPosition(gaussTime);
+            p = enemy.getFuturePos(gaussTime);
         }
 
         gunOffset = normaliseBearing(getGunHeadingRadians() -

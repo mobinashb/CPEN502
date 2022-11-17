@@ -3,7 +3,7 @@ package LUT;
 import robocode.RobocodeFileWriter;
 import java.io.*;
 
-public class LogFile {
+public class LUTLogger {
     public void writeToFile(File fileToWrite, double winRate, int roundCount) {
         try{
             RobocodeFileWriter fileWriter = new RobocodeFileWriter(fileToWrite.getAbsolutePath(), true);

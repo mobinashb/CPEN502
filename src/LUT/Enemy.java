@@ -17,10 +17,14 @@ public class Enemy {
         this.energy = 100;
     }
 
-    public Point2D.Double getNextPosition(long gaussTime) {
+    public Point2D.Double getFuturePos(long gaussTime) {
         double diff = gaussTime - ctime;
+
         double nextX = x + Math.sin(heading) * speed * diff;
         double nextY = y + Math.cos(heading) * speed * diff;
-        return new Point2D.Double(nextX, nextY);
+
+        Point2D.Double futurePos = new Point2D.Double(nextX, nextY);
+
+        return futurePos;
     }
 }
