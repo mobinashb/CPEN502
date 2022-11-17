@@ -13,14 +13,14 @@ public class LUTRobot extends AdvancedRobot {
     private static final boolean BASELINE_ROBOT= false;
     private static final double BASE_DISTANCE = 400.0;
     private Enemy enemy;
-    private static LUT table;
+    private static LUT table = new LUT();
     private double reward;
-    private double firePower = 1;
+    private double firePower = 2;
     private int isHitByBullet = 0;
     private int isHitWall = 0;
 
-    public static final String fileToSaveName = LUTRobot.class.getSimpleName() + "-"  + "winningRate"+ ".log";
-    public static final String fileToSaveLUT = LUTRobot.class.getSimpleName() + "-"  + "LUT";
+    public static final String winningRateFile = LUTRobot.class.getSimpleName() + "-winningRate.log";
+    public static final String LUTValueFile = LUTRobot.class.getSimpleName() + "-LUTValues.log";
     static LogFile log = new LogFile();
 
     private static int numTotalRounds = 0;
@@ -62,7 +62,7 @@ public class LUTRobot extends AdvancedRobot {
     }
 
     public int getNextAction(int state) {
-        if (numTotalRounds > EPSILON_THRESHOLD) epsilon = 0.1;
+        if (numTotalRounds > EPSILON_THRESHOLD) epsilon = 0.0;
         double random = Math.random();
         if(random < epsilon) {
             return (int)(Math.random() * Action.ROBOT_NUM_ACTIONS);
@@ -92,7 +92,7 @@ public class LUTRobot extends AdvancedRobot {
 
     public void run() {
         //state = new State();
-        table = new LUT();
+
         enemy = new Enemy("enemy");
         enemy.distance = 10000;
 
@@ -160,7 +160,13 @@ public class LUTRobot extends AdvancedRobot {
         int bearing = State.getBearing(enemy.bearing);
         int distance = State.getDistance(enemy.distance);
         int energy = State.getEnergyLevel(getEnergy());
-        return State.states[distance][bearing][heading][isHitByBullet][isHitWall][energy];
+        int enemyEnergy = State.getEnergyLevel(enemy.energy);
+
+        int state = State.states[distance][bearing][heading][isHitByBullet][isHitWall][energy][enemyEnergy];
+
+        table.addVisit(state);
+
+        return state;
     }
 
     private void writeLog(boolean hasWon) {
@@ -169,7 +175,7 @@ public class LUTRobot extends AdvancedRobot {
         if (numTotalRounds % ROUNDS_BATCH_SIZE == 0) {
             double winPercentage = (double) numWinRounds / 100;
             numWinRounds = 0;
-            File folderDst = getDataFile(fileToSaveName);
+            File folderDst = getDataFile(winningRateFile);
             log.writeToFile(folderDst, winPercentage, numTotalRounds / ROUNDS_BATCH_SIZE);
         }
     }
@@ -188,6 +194,7 @@ public class LUTRobot extends AdvancedRobot {
             enemy.speed = e.getVelocity();
             enemy.bearing = e.getBearingRadians();
             enemy.heading = e.getHeadingRadians();
+            enemy.energy = e.getEnergy();
         }
     }
 
@@ -226,7 +233,7 @@ public class LUTRobot extends AdvancedRobot {
     public void onHitWall(HitWallEvent e){
         isHitWall = 1;
         if(INTERMEDIATE_REWARD) {
-            reward -= 5;
+            reward -= 3;
         }
     }
 
@@ -273,4 +280,9 @@ public class LUTRobot extends AdvancedRobot {
         }
     }
 
+    @Override
+    public void onBattleEnded(BattleEndedEvent event) {
+        File folderDst = getDataFile(LUTValueFile);
+        log.writeLUTValue(folderDst, table);
+    }
 }

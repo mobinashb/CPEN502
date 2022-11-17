@@ -9,14 +9,15 @@ public class State {
     public static final int numHitByBullet = 2; //whether hit by bullet or not
     public static final int numHitWall = 2; //whether hit wall or not
     public static final int numEnergy = 5; //levels of robot energy
+    public static final int enemyEnergy = 5; //levels of enemy energy
 
     public static final double totalAngle = 360.0;
     public static final double circle = Math.PI * 2;
 
-    public static int states[][][][][][];
+    public static int states[][][][][][][];
 
     static {
-        states = new int[numEnemyDistance][numEnemyDirection][numRobotDirection][numHitByBullet][numHitWall][numEnergy];
+        states = new int[numEnemyDistance][numEnemyDirection][numRobotDirection][numHitByBullet][numHitWall][numEnergy][enemyEnergy];
         int totalStates = 0;
         for(int a = 0; a < numEnemyDistance; a++) {
             for(int b = 0; b < numEnemyDirection; b++) {
@@ -24,7 +25,9 @@ public class State {
                     for(int d = 0; d < numHitByBullet; d++) {
                         for(int e = 0; e < numHitByBullet; e++) {
                             for(int f = 0; f < numEnergy; f++) {
-                                states[a][b][c][d][e][f] = totalStates++;
+                                for(int g = 0; g < numEnergy; g++) {
+                                    states[a][b][c][d][e][f][g] = totalStates++;
+                                }
                             }
                         }
                     }

@@ -10,9 +10,11 @@ public class Enemy {
     public double x, y;
     public double distance, speed;
     public long ctime;
+    public double energy;
 
     public Enemy(String name) {
         this.name = name;
+        this.energy = 100;
     }
 
     public Point2D.Double getNextPosition(long gaussTime) {

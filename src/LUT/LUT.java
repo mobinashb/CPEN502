@@ -7,17 +7,24 @@ import java.io.IOException;
 
 public class LUT implements LUTInterface {
     private double table[][];
+    private int visits[];
 
     public LUT() {
         this.table = new double[State.numStates][Action.ROBOT_NUM_ACTIONS];
+        this.visits = new int[State.numStates];
         initializeLUT();
+    }
+
+    public int[] getVisits() {
+        return visits;
     }
 
     @Override
     public void initializeLUT() {
         for(int i=0; i<State.numStates; i++) {
+            visits[i] = 0;
             for(int j=0; j<Action.ROBOT_NUM_ACTIONS; j++) {
-                table[i][j] = Math.random();
+                table[i][j] = 0; //Math.random();
             }
         }
     }
@@ -68,5 +75,13 @@ public class LUT implements LUTInterface {
     @Override
     public void load(String argFileName) throws IOException {
 
+    }
+
+    public double[][] getTable() {
+        return table;
+    }
+
+    public void addVisit(int i) {
+        visits[i] += 1;
     }
 }
