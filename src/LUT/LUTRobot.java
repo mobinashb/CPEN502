@@ -4,13 +4,13 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import robocode.*;
 
 public class LUTRobot extends AdvancedRobot {
     private static final boolean ON_POLICY = true;
     private static final boolean INTERMEDIATE_REWARD = true;
-    private static final boolean BASELINE_ROBOT= false;
     private static final double BASE_DISTANCE = 400.0;
 
     private Enemy enemy;
@@ -26,31 +26,29 @@ public class LUTRobot extends AdvancedRobot {
 
     private static int numTotalRounds = 0;
     private static int numWinRounds = 0;
-
     private static final int ROUNDS_BATCH_SIZE = 100;
-
     public static final double learningRate = 0.2;
     public static final double discountFactor = 0.9;
-    public static double epsilon = 0.9;
-
+    public static double epsilon = 0.1;
     private static final int EPSILON_THRESHOLD = 8000;
+    private static final boolean EPSILON_DECAY = false;
 
     private int prevState = -1;
     private int prevAction = -1;
     private boolean firstRound = true;
     public ArrayList<String> finalStates = new ArrayList<>();
 
-    public void Learn(int currState, int currAction, double reward, boolean isOnPolicy, boolean isIntermidiateRewards) {
-        if(!isIntermidiateRewards) {
-            finalStates.add(currState+"-"+currAction);
+    public void Learn(int currState, int currAction) {
+        if (!INTERMEDIATE_REWARD) {
+            finalStates.add(currState + "-" + currAction);
             return;
         }
         double newValue;
-        if(firstRound) {
+        if (firstRound) {
             firstRound = false;
         } else {
             double oldValue = table.getQValue(prevState, prevAction);
-            if(isOnPolicy) {
+            if (ON_POLICY) {
                 newValue = oldValue + learningRate * (reward + discountFactor * table.getQValue(currState, currAction)
                         - oldValue);
             } else {
@@ -63,9 +61,9 @@ public class LUTRobot extends AdvancedRobot {
     }
 
     public int getNextAction(int state) {
-        if (numTotalRounds > EPSILON_THRESHOLD) epsilon = 0.0;
+        if (EPSILON_DECAY && (numTotalRounds > EPSILON_THRESHOLD)) epsilon = 0.0;
         double random = Math.random();
-        if(random < epsilon) {
+        if (random < epsilon) {
             return (int)(Math.random() * Action.ROBOT_NUM_ACTIONS);
         }
         return table.getBestAction(state);
@@ -75,15 +73,15 @@ public class LUTRobot extends AdvancedRobot {
         int n = finalStates.size();
         double currValue, nextValue;
         String[] strs = finalStates.get(n-1).split("-");
-        int state = Integer.valueOf(strs[0]);
-        int action = Integer.valueOf(strs[1]);
+        int state = Integer.parseInt(strs[0]);
+        int action = Integer.parseInt(strs[1]);
 
         table.setQValue(state, action, value);
         nextValue = value;
         for(int i=n-2; i>=0; i--) {
             strs = finalStates.get(i).split("-");
-            state = Integer.valueOf(strs[0]);
-            action = Integer.valueOf(strs[1]);
+            state = Integer.parseInt(strs[0]);
+            action = Integer.parseInt(strs[1]);
             currValue = table.getQValue(state, action);
             currValue += learningRate * (discountFactor * nextValue - currValue);
             table.setQValue(state, action, currValue);
@@ -92,8 +90,6 @@ public class LUTRobot extends AdvancedRobot {
     }
 
     public void run() {
-        //state = new State();
-
         enemy = new Enemy("enemy");
         enemy.distance = 10000;
 
@@ -102,11 +98,9 @@ public class LUTRobot extends AdvancedRobot {
         setAdjustRadarForGunTurn(true);
         turnRadarRightRadians(2 * Math.PI);
 
-        while(true) {
-            if(!BASELINE_ROBOT) {
-                firePower = BASE_DISTANCE / enemy.distance;
-                firePower = Math.min(3, firePower);
-            }
+        while (true) {
+            firePower = BASE_DISTANCE / enemy.distance;
+            firePower = Math.min(3, firePower);
             radarMovement();
             gunMovement();
             robotMovement();
@@ -120,16 +114,12 @@ public class LUTRobot extends AdvancedRobot {
 
     public void robotMovement() {
         int action;
-        if(BASELINE_ROBOT) {
-            action = (int)(Math.random() * Action.ROBOT_NUM_ACTIONS);
-        } else {
-            int state = getState();
-            action = getNextAction(state);
-            Learn(state, action, reward, ON_POLICY, INTERMEDIATE_REWARD);
-            reward = 0.0;
-            isHitByBullet = 0;
-            isHitWall = 0;
-        }
+        int state = getState();
+        action = getNextAction(state);
+        Learn(state, action);
+        reward = 0.0;
+        isHitByBullet = 0;
+        isHitWall = 0;
 
         switch (action) {
             case Action.ROBOT_UP:
@@ -182,7 +172,7 @@ public class LUTRobot extends AdvancedRobot {
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
-        if ((enemy.name == e.getName()) || (e.getDistance() < enemy.distance)) {
+        if ((Objects.equals(enemy.name, e.getName())) || (e.getDistance() < enemy.distance)) {
             enemy.name = e.getName();
             double bearingRadius = (getHeadingRadians() + e.getBearingRadians()) % (2 * Math.PI);
             double heading = normaliseBearing(e.getHeadingRadians() - enemy.heading);
@@ -233,34 +223,31 @@ public class LUTRobot extends AdvancedRobot {
 
     public void onHitWall(HitWallEvent e){
         isHitWall = 1;
-        if(INTERMEDIATE_REWARD) {
+        if (INTERMEDIATE_REWARD) {
             reward -= 3;
         }
     }
 
     public void onBulletHit(BulletHitEvent e) {
-        if(INTERMEDIATE_REWARD) {
+        if (INTERMEDIATE_REWARD) {
             reward += 10;
         }
     }
 
     public void onHitByBullet(HitByBulletEvent e) {
         isHitByBullet = 1;
-        if(INTERMEDIATE_REWARD) {
+        if (INTERMEDIATE_REWARD) {
             reward -= 10;
         }
     }
 
     public void onBulletMissed(BulletMissedEvent e) {
-        if(INTERMEDIATE_REWARD) {
+        if (INTERMEDIATE_REWARD) {
             reward -= 3;
         }
     }
 
     public void onDeath(DeathEvent event) {
-        if(BASELINE_ROBOT) {
-            return;
-        }
         writeLog(false);
         if (INTERMEDIATE_REWARD) {
             reward -= 60;
@@ -270,9 +257,6 @@ public class LUTRobot extends AdvancedRobot {
     }
 
     public void onWin(WinEvent event) {
-        if(BASELINE_ROBOT) {
-            return;
-        }
         writeLog(true);
         if (INTERMEDIATE_REWARD) {
             reward += 60;

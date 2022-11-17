@@ -24,7 +24,7 @@ public class LUT implements LUTInterface {
         for(int i=0; i<State.numStates; i++) {
             visits[i] = 0;
             for(int j=0; j<Action.ROBOT_NUM_ACTIONS; j++) {
-                table[i][j] = 0; //Math.random();
+                table[i][j] = Math.random(); //Math.random();
             }
         }
     }
