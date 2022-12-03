@@ -8,10 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class NeuralNet implements NeuralNetInterface {
 
@@ -26,7 +23,7 @@ public class NeuralNet implements NeuralNetInterface {
     private double initWeightsMin = -0.5;
     private double errorThreshold = 0.05;
 
-    private boolean isBinary = true; //binary or bipolar
+    private boolean isBinary = false; //binary or bipolar
 
     private double[] inputLayer = new double[argNumInputs + 1];  //one extra for the bias value
     private double[] hiddenLayer = new double[argNumHidden + 1];
@@ -59,6 +56,20 @@ public class NeuralNet implements NeuralNetInterface {
 
         this.argA = argA;
         this.argB = argB;
+
+        inputLayer = new double[argNumInputs + 1];  //one extra for the bias value
+        hiddenLayer = new double[argNumHidden + 1];
+        outputLayer = new double[numOfOutputs];
+
+        w1 = new double[argNumInputs + 1][argNumHidden];
+        w2 = new double[argNumHidden + 1][numOfOutputs];
+        deltaW1 = new double[argNumInputs + 1][argNumHidden];
+        deltaW2 = new double[argNumHidden + 1][numOfOutputs];
+        deltaOutput = new double[numOfOutputs];
+        deltaHidden = new double[argNumHidden];
+
+        totalError = new double[numOfOutputs];
+        singleError = new double[numOfOutputs];
     }
 
     public void setRepresentation(boolean isBinary) { //binary or bipolar
@@ -69,14 +80,9 @@ public class NeuralNet implements NeuralNetInterface {
         }
     }
 
-    public void initializeTrainSet() {
-        if (isBinary) {
-            trainX = new double[][]{{0, 0}, {0, 1}, {1, 0}, {1, 1}}; //xor
-            trainY = new double[][]{{0}, {1}, {1}, {0}};
-        } else {
-            trainX = new double[][]{{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-            trainY = new double[][]{{-1}, {1}, {1}, {-1}};
-        }
+    public void initializeTrainSet(double [][] trainInput, double[][] trainOutput) {
+        trainX = trainInput;
+        trainY = trainOutput;
     }
 
     @Override
@@ -125,16 +131,13 @@ public class NeuralNet implements NeuralNetInterface {
     }
 
     private void initializeLayers(double[] sample) {
-        for (int i = 0; i < argNumInputs; i++) {
-            inputLayer[i] = sample[i];
-        }
+        System.arraycopy(sample, 0, inputLayer, 0, argNumInputs);
         inputLayer[argNumInputs] = bias;
         hiddenLayer[argNumHidden] = bias;
     }
 
     private void forwardPropagation(double[] sample) {
         initializeLayers(sample);
-
         for (int j = 0; j < argNumHidden; j++) {
             hiddenLayer[j] = 0;
             for (int i = 0; i <= argNumInputs; i++) {
@@ -211,6 +214,7 @@ public class NeuralNet implements NeuralNetInterface {
             for (int k = 0; k < numOfOutputs; k++) totalError[k] /= 2;
             error.add(Double.toString(totalError[0]));
             epoch++;
+            System.out.println(epoch + "\t" + totalError[0]);
         } while (totalError[0] > errorThreshold);
 
         return epoch;

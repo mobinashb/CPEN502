@@ -15,7 +15,6 @@ public class Main {
         NeuralNet neuralNet = new NeuralNet(2, 4, 1, 0.2, 0.9, -1, 1);
         neuralNet.setRepresentation(false);
 
-        neuralNet.initializeTrainSet();
         int epoch = 0;
         for (int i = 0; i < 25; i++) {
             neuralNet.initializeWeights();

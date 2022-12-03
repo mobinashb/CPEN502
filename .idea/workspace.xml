@@ -4,13 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="remove redundant condition in writeLog">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/robocode.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/robocode.xml" afterDir="false" />
+    <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="fix bug in logging">
+      <change afterPath="$PROJECT_DIR$/data.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/LUTNN/LUTNN.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/robot.database" beforeDir="false" afterPath="$PROJECT_DIR$/robots/robot.database" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/BasicRobot.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LUT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LUT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LUT/LUTRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUT/LUTRobot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/NN/NeuralNet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NN/NeuralNet.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,12 +19,17 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="assignment2" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -38,12 +42,31 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "last_opened_file_path": "/Users/mobina/Desktop/UBC/Fall2022/CPEN502/CPEN502",
     "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.LUTNN">
+    <configuration name="LUTNN" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="LUTNN.LUTNN" />
+      <module name="CPEN502" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="LUTNN.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Robocode" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="robocode.Robocode" />
       <module name="CPEN502" />
@@ -51,8 +74,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.LUTNN" />
+      </list>
+    </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="false" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -101,6 +129,17 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="merge files into one" />
     <MESSAGE value="remove redundant condition in writeLog" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove redundant condition in writeLog" />
+    <MESSAGE value="fix bug in logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix bug in logging" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.ArrayIndexOutOfBoundsException" package="java.lang" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
