@@ -19,8 +19,7 @@ public class LUTNN {
         double learningRate, momentumTerm;
         int numHidden;
         int numTrial = 1;
-        int epoch = 0;
-        learningRate = 0.2;
+        learningRate = 0.001;
         momentumTerm = 0.9;
         numHidden = 28;
 
@@ -30,25 +29,21 @@ public class LUTNN {
             e.printStackTrace();
         }
 
-        NeuralNet lutNN = new NeuralNet(14, numHidden,1,learningRate, momentumTerm, -1, 1);
+        NeuralNet lutNN = new NeuralNet(14, 1, numHidden, learningRate, momentumTerm, -1, 1, -0.5, 0.5);
+        lutNN.initializeWeights();
 
         for (int t = 0; t < numTrial; t++) {
-            lutNN.initializeWeights();
-            lutNN.initializeTrainSet(trainInput, convertTo2d(trainOutput));
-            epoch = 0;
-            lutNN.train();
 
-//            double RMSError;
-//            do {
-//                totalError = 0;
-//                epoch++;
-//
-//                for (int i = 0; i < numTrainSet; i++) {
-//                    totalError += Math.pow(lutNN.train(trainInput[i], trainOutput[i]), 2);
-//                }
-//                RMSError = Math.sqrt(totalError / numTrainSet);
-//                System.out.println(RMSError);
-//            } while (RMSError > errorThreshold);
+            double RMSError;
+            do {
+                totalError = 0;
+
+                for (int i = 0; i < numTrainSet; i++) {
+                    totalError += Math.pow(lutNN.train(trainInput[i], trainOutput[i]), 2);
+                }
+                RMSError = Math.sqrt(totalError / numTrainSet);
+                System.out.println(RMSError);
+            } while (RMSError > errorThreshold);
         }
     }
 

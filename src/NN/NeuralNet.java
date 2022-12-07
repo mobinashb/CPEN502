@@ -2,296 +2,422 @@ package NN;
 
 import Interfaces.NeuralNetInterface;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.lang.Math;
+import java.util.Arrays;
+import java.util.Random;
 
-public class NeuralNet implements NeuralNetInterface {
+/**
+ * A simple neural network with one hidden layer,
+ * a selectable number of hidden neurons (up to MAX_HIDDEN_NEURONS) and a selectable number of
+ * inputs (up to MAX_INPUTS)
+ */
+public class NeuralNet implements NeuralNetInterface
+{
+    // Constants
+    private static final int MAX_HIDDEN_NEURONS = 1000;
+    private static final int MAX_INPUTS =         14;
+    private static final int MAX_OUTPUTS =        7;
 
-    private int argNumInputs = 2;
-    private int argNumHidden = 4;
-    private int numOfOutputs = 1;
-    private double learningRate = 0.2;
-    private double momentum = 0.0;
-    private double argA = 0;
-    private double argB = 1;
-    private double initWeightsMax = 0.5;
-    private double initWeightsMin = -0.5;
-    private double errorThreshold = 0.05;
+    // Private member variables
+    // Limits for custom sigmoid activation function used by the output neuron
+    private double mArgA;
+    private double mArgB;
+    private double mWeightInitMin;
+    private double mWeightInitMax;
 
-    private boolean isBinary = false; //binary or bipolar
+    // Public member variables
+    // Neural network parameters
+    // We only have a single hidden layer with a provided number of inputs and hidden neurons
+    private int mNumInputs;
+    private int mNumOutputs;
+    private int mNumHiddenNeurons;
 
-    private double[] inputLayer = new double[argNumInputs + 1];  //one extra for the bias value
-    private double[] hiddenLayer = new double[argNumHidden + 1];
-    private double[] outputLayer = new double[numOfOutputs];
+    // Learning rate and momentum term
+    private double mLearningRate;
+    private double mMomentumTerm;
 
-    private double[][] w1 = new double[argNumInputs + 1][argNumHidden];
-    private double[][] w2 = new double[argNumHidden + 1][numOfOutputs];
-    private double[][] deltaW1 = new double[argNumInputs + 1][argNumHidden];
-    private double[][] deltaW2 = new double[argNumHidden + 1][numOfOutputs];
-    private double[] deltaOutput = new double[numOfOutputs];
-    private double[] deltaHidden = new double[argNumHidden];
+    // Array to store input values to the neural network, first index is bias input of 1.0
+    private double[] mInputValues = new double[MAX_INPUTS];
 
-    private double[] totalError = new double[numOfOutputs];
-    private double[] singleError = new double[numOfOutputs];
-    private List<String> error = new LinkedList<>();
-    private double[][] trainX;
-    private double[][] trainY;
+    // Array to store input weights to the neurons of the hidden layer
+    private static double[][] mInputWeights = new double[MAX_HIDDEN_NEURONS][MAX_INPUTS];
+    // Array to store previous weights
+    private static double[][] mPreviousInputWeights = new double[MAX_HIDDEN_NEURONS][MAX_INPUTS];
 
-    public NeuralNet() {}
+    // Array to store unactivated neuron outputs of the hidden layer
+    private double[] mHiddenNeuronUnactivatedOutputs = new double[MAX_HIDDEN_NEURONS];
+    // Array to store neuron outputs of the hidden layer
+    private double[] mHiddenNeuronOutputs = new double[MAX_HIDDEN_NEURONS];
+    // Array to store neuron errors of the hidden layer
+    private double[] mHiddenNeuronErrors = new double[MAX_HIDDEN_NEURONS];
 
-    public NeuralNet(int argNumInputs, int argNumHidden, int numOfOutputs,
-                     double learningRate, double momentum,
-                     double argA, double argB) {
-        this.argNumInputs = argNumInputs;
-        this.argNumHidden = argNumHidden;
-        this.numOfOutputs = numOfOutputs;
+    // Array to store the output neuron's input weights
+    private static double[][] mOutputNeuronWeights = new double[MAX_OUTPUTS][MAX_HIDDEN_NEURONS];
+    // Array to store the previous output neuron's weights
+    private static double[][] mPreviousOutputNeuronWeights = new double[MAX_OUTPUTS][MAX_HIDDEN_NEURONS];
+    // Variables for output neuron bias weight
+    private static double[] mOutputNeuronBiasWeights = new double[MAX_OUTPUTS];
+    private static double[] mPreviousOutputNeuronBiasWeights = new double[MAX_OUTPUTS];
 
-        this.learningRate = learningRate;
-        this.momentum = momentum;
+    // Variable for unactivated output neuron value
+    private double[] mOutputNeuronUnactivatedValues = new double[MAX_OUTPUTS];
+    // Variable for value of output neuron
+    private double[] mOutputNeuronValues = new double[MAX_OUTPUTS];
+    // Variable for out neuron error
+    private double[] mOutputNeuronErrors = new double[MAX_OUTPUTS];
 
-        this.argA = argA;
-        this.argB = argB;
+    /**
+     * Constructor for NeuralNet
+     * @param argNumInputs The number of inputs in your input vector
+     * @param argNumHidden The number of hidden neurons in your hidden layer. Only a single hidden layer is supported
+     * @param argLearningRate The learning rate coefficient
+     * @param argMomentumTerm The momentum coefficient
+     * @param argA Integer lower bound of sigmoid used by the output neuron only.
+     * @param argB Integer upper bound of sigmoid used by the output neuron only.
+     */
+    public NeuralNet(int argNumInputs,
+                          int argNumOutputs,
+                          int argNumHidden,
+                          double argLearningRate,
+                          double argMomentumTerm,
+                          double argA,
+                          double argB,
+                          double argWeightInitMin,
+                          double argWeightInitMax)
+    {
+        // Update our private variables
+        mArgA = argA;
+        mArgB = argB;
+        mWeightInitMin = argWeightInitMin;
+        mWeightInitMax = argWeightInitMax;
+        // Add one here so that we don't worry about it later in the code (for bias)
+        mNumInputs = argNumInputs + 1;
+        mNumOutputs = argNumOutputs;
+        mNumHiddenNeurons = argNumHidden;
+        // Record the learning and momentum rates
+        mLearningRate = argLearningRate;
+        mMomentumTerm = argMomentumTerm;
+        // Zero out the weights (also clears previous entry)
+        zeroWeights();
 
-        inputLayer = new double[argNumInputs + 1];  //one extra for the bias value
-        hiddenLayer = new double[argNumHidden + 1];
-        outputLayer = new double[numOfOutputs];
-
-        w1 = new double[argNumInputs + 1][argNumHidden];
-        w2 = new double[argNumHidden + 1][numOfOutputs];
-        deltaW1 = new double[argNumInputs + 1][argNumHidden];
-        deltaW2 = new double[argNumHidden + 1][numOfOutputs];
-        deltaOutput = new double[numOfOutputs];
-        deltaHidden = new double[argNumHidden];
-
-        totalError = new double[numOfOutputs];
-        singleError = new double[numOfOutputs];
+        // System.out.format("Hi. Neural net instantiated with %5d inputs and %5d hidden neurons.\n", mNumInputs-1, mNumHiddenNeurons-1);
     }
 
-    public void setRepresentation(boolean isBinary) { //binary or bipolar
-        this.isBinary = isBinary;
-        if (!isBinary) {
-            argB = 1;
-            argA = -1;
-        }
+    /**
+     * This method implements the sigmoid function
+     * @param x The input
+     * @return f(x) = 1 / (1 + exp(-x))
+     */
+    public double sigmoid(double x)
+    {
+        double result;
+
+        result =  1 / (1 + Math.exp(-x));
+
+        return result;
     }
 
-    public void initializeTrainSet(double [][] trainInput, double[][] trainOutput) {
-        trainX = trainInput;
-        trainY = trainOutput;
+    /**
+     * This method implements the first derivative of the sigmoid function
+     * @param x The input
+     * @return f'(x) = (1 / (1 + exp(-x)))(1 - (1 / (1 + exp(-x))))
+     */
+    public double sigmoidDerivative(double x)
+    {
+        double result;
+
+        result = sigmoid(x)*(1 - sigmoid(x));
+
+        return result;
     }
 
-    @Override
-    public double sigmoid(double x) {
-        return 2 / (1 + Math.exp(-x)) - 1;
+    /**
+     * This method implements a general sigmoid with asymptotes bounded by (a,b)
+     * @param x The input
+     * @return f(x) = (b - a) / (1 + exp(-x)) + a
+     */
+    public double customSigmoid(double x)
+    {
+        double result;
+
+        result = (mArgB - mArgA) * sigmoid(x) + mArgA;
+
+        return result;
     }
 
-    @Override
-    public double customSigmoid(double x) {
-        return (argB - argA) / (1 + Math.exp(-x)) - (-1 * argA);
+    /**
+     * This method implements the first derivative of the general sigmoid above
+     * @param x The input
+     * @return f'(x) = (1 / (b - a))(customSigmoid(x) - a)(b - customSigmoid(x))
+     */
+    public double customSigmoidDerivative(double x)
+    {
+        double result;
+
+        result = (1.0/(mArgB - mArgA)) * (customSigmoid(x) - mArgA) * (mArgB - customSigmoid(x));
+
+        return result;
     }
 
-    @Override
-    public void initializeWeights() {
-        Random r = new Random();
-        for (int i = 0; i <= argNumInputs; i++) {
-            for (int j = 0; j < argNumHidden; j++) {
-                w1[i][j] = initWeightsMin + (initWeightsMax - initWeightsMin) * r.nextDouble();
-                deltaW1[i][j] = 0;
+    /**
+     * Initialize the weights to a random value between WEIGHT_INIT_MIN and WEIGHT_INIT_MAX
+     */
+    public void initializeWeights()
+    {
+        int i, j;
+
+        // initialize inner neuron weights
+        for(i = 0; i < mNumHiddenNeurons; i++)
+        {
+            for(j = 0; j < mNumInputs; j++)
+            {
+                mInputWeights[i][j] = getRandomDouble(mWeightInitMin, mWeightInitMax);
             }
         }
 
-        for (int j = 0; j <= argNumHidden; j++) {
-            for (int k = 0; k < numOfOutputs; k++) {
-                w2[j][k] = initWeightsMin + (initWeightsMax - initWeightsMin) * r.nextDouble();
-                deltaW2[j][k] = 0;
+        // initialize outer neuron weights
+        for(i = 0; i < mNumOutputs; i++)
+        {
+            for(j = 0; j < mNumHiddenNeurons; j++)
+            {
+                // initialize the output neuron weights
+                mOutputNeuronWeights[i][j] = getRandomDouble(mWeightInitMin, mWeightInitMax);
+                mOutputNeuronBiasWeights[i] = getRandomDouble(mWeightInitMin, mWeightInitMax);
+            }
+        }
+
+        // Copy the initial weights into the delta tracking variables
+        mPreviousInputWeights = mInputWeights.clone();
+        mPreviousOutputNeuronWeights = mOutputNeuronWeights.clone();
+        mPreviousOutputNeuronBiasWeights = mOutputNeuronBiasWeights.clone();
+    }
+
+    private double calculateWeightDelta(double weightInput, double error, double currentWeight, double previousWeight)
+    {
+        double momentumTerm, learningTerm;
+
+        momentumTerm = mMomentumTerm * (currentWeight - previousWeight);
+        learningTerm = mLearningRate * error * weightInput;
+        return (momentumTerm + learningTerm);
+    }
+
+    /**
+     * Updates the weights based on the current backpropagated error
+     */
+    private void updateWeights()
+    {
+        int hiddenNeuron, outputNeuron, input;
+        double[] newOutputNeuronBiasWeights = new double[MAX_OUTPUTS];
+        double[][] newOutputNeuronWeights = new double[MAX_OUTPUTS][MAX_HIDDEN_NEURONS];
+        double[][] newInputNeuronWeights = new double[MAX_HIDDEN_NEURONS][MAX_INPUTS];
+
+        // Update the weights from hidden neurons to the output neurons
+        // Update the weight from bias input to the output neurons
+        for(outputNeuron = 0; outputNeuron < mNumOutputs; outputNeuron++)
+        {
+            // Bias input weight
+            newOutputNeuronBiasWeights[outputNeuron] =
+                    mOutputNeuronBiasWeights[outputNeuron] +
+                            calculateWeightDelta(1.0,
+                                    mOutputNeuronErrors[outputNeuron],
+                                    mOutputNeuronBiasWeights[outputNeuron],
+                                    mPreviousOutputNeuronBiasWeights[outputNeuron]);
+
+            // Hidden neuron weights
+            for(hiddenNeuron = 0; hiddenNeuron < mNumHiddenNeurons; hiddenNeuron++)
+            {
+                newOutputNeuronWeights[outputNeuron][hiddenNeuron] =
+                        mOutputNeuronWeights[outputNeuron][hiddenNeuron] +
+                                calculateWeightDelta(
+                                        mHiddenNeuronOutputs[hiddenNeuron],
+                                        mOutputNeuronErrors[outputNeuron],
+                                        mOutputNeuronWeights[outputNeuron][hiddenNeuron],
+                                        mPreviousOutputNeuronWeights[outputNeuron][hiddenNeuron]);
+            }
+        }
+
+        // Update the weights to the hidden neurons
+        for(hiddenNeuron = 0; hiddenNeuron < mNumHiddenNeurons; hiddenNeuron++)
+        {
+            for(input = 0; input < mNumInputs; input++)
+            {
+                newInputNeuronWeights[hiddenNeuron][input] = mInputWeights[hiddenNeuron][input] +
+                        calculateWeightDelta(
+                                mInputValues[input],
+                                mHiddenNeuronErrors[hiddenNeuron],
+                                mInputWeights[hiddenNeuron][input],
+                                mPreviousInputWeights[hiddenNeuron][input]);
+            }
+        }
+
+        mPreviousOutputNeuronBiasWeights = mOutputNeuronBiasWeights.clone();
+        mPreviousOutputNeuronWeights = mOutputNeuronWeights.clone();
+        mPreviousInputWeights = mInputWeights.clone();
+
+        mOutputNeuronBiasWeights = newOutputNeuronBiasWeights.clone();
+        mOutputNeuronWeights = newOutputNeuronWeights.clone();
+        mInputWeights = newInputNeuronWeights.clone();
+    }
+
+    /**
+     * Returns a random double value between specified min and max values
+     * @param min minimum number random number can be
+     * @param max maximum number random number can be
+     * @return a random double between specified min and max
+     */
+    private double getRandomDouble(double min, double max)
+    {
+        double random, result;
+
+        random = new Random().nextDouble();
+        result = min + (random * (max - min));
+
+        return result;
+    }
+
+    public void zeroWeights()
+    {
+        int i, j;
+
+        // initialize inner neurons weights
+        for(i = 0; i < mNumHiddenNeurons; i++)
+        {
+            for(j = 0; j < mNumInputs; j++)
+            {
+                mInputWeights[i][j] = 0.0;
+                mPreviousInputWeights[i][j] = 0.0;
+            }
+        }
+
+        // initialize output neuron weights
+        for(i = 0; i < mNumOutputs; i++)
+        {
+            for(j = 0; j < mNumHiddenNeurons; j++)
+            {
+                mPreviousOutputNeuronWeights[i][j] = 0.0;
+                mOutputNeuronWeights[i][j] = 0.0;
             }
         }
     }
 
-    @Override
-    public void zeroWeights() {
-        for (int i = 0; i <= argNumInputs; i++) {
-            for (int j = 0; j < argNumHidden; j++) {
-                w1[i][j] = 0;
-                deltaW1[i][j] = 0;
-            }
+    /**
+     * @param x The input vector. An array of doubles.
+     * @return The value returned by the NN for this input vector
+     */
+    public double outputFor(double[] x)
+    {
+        int hiddenNeuron, outputNeuron, input, index;
+
+        mInputValues[0] = 1.0;
+
+        for (index = 0; index < x.length; index++)
+        {
+            mInputValues[index+1] = x[index];
         }
 
-        for (int j = 0; j <= argNumHidden; j++) {
-            for (int k = 0; k < numOfOutputs; k++) {
-                w2[j][k] = 0;
-                deltaW2[j][k] = 0;
+        // Calculate hidden neuron outputs
+        // Bias is included in input vector as the first index
+        for(hiddenNeuron = 0; hiddenNeuron < mNumHiddenNeurons; hiddenNeuron++)
+        {
+            mHiddenNeuronUnactivatedOutputs[hiddenNeuron] = 0.0;
+            // iterate over bias input + inputs
+            for(input = 0; input < mNumInputs; input++)
+            {
+                mHiddenNeuronUnactivatedOutputs[hiddenNeuron] += mInputWeights[hiddenNeuron][input] * mInputValues[input];
             }
-        }
-    }
-
-    private void initializeLayers(double[] sample) {
-        System.arraycopy(sample, 0, inputLayer, 0, argNumInputs);
-        inputLayer[argNumInputs] = bias;
-        hiddenLayer[argNumHidden] = bias;
-    }
-
-    private void forwardPropagation(double[] sample) {
-        initializeLayers(sample);
-        for (int j = 0; j < argNumHidden; j++) {
-            hiddenLayer[j] = 0;
-            for (int i = 0; i <= argNumInputs; i++) {
-                hiddenLayer[j] += w1[i][j] * inputLayer[i];
-            }
-            hiddenLayer[j] = customSigmoid(hiddenLayer[j]);
+            // Apply the activation function to the weighted sum
+            mHiddenNeuronOutputs[hiddenNeuron] = customSigmoid(mHiddenNeuronUnactivatedOutputs[hiddenNeuron]);
         }
 
-        for (int k = 0; k < numOfOutputs; k++) {
-            outputLayer[k] = 0;
-            for (int j = 0; j <= argNumHidden; j++) {
-                outputLayer[k] += w2[j][k] * hiddenLayer[j];
+        // Calculate the output of the output neurons
+        for(outputNeuron = 0; outputNeuron < mNumOutputs; outputNeuron++)
+        {
+            mOutputNeuronUnactivatedValues[outputNeuron] = 0.0;
+            for(hiddenNeuron = 0; hiddenNeuron < mNumHiddenNeurons; hiddenNeuron++)
+            {
+                mOutputNeuronUnactivatedValues[outputNeuron] += mHiddenNeuronOutputs[hiddenNeuron] * mOutputNeuronWeights[outputNeuron][hiddenNeuron];
             }
-            outputLayer[k] = customSigmoid(outputLayer[k]);
-        }
-    }
-
-    private void calculateOutputErrors(double[] sampleOutput) {
-        for (int k = 0; k < numOfOutputs; k++) {
-            singleError[k] = sampleOutput[k] - outputLayer[k];
-            totalError[k] += Math.pow(singleError[k], 2);
-        }
-    }
-
-    private void backPropagation() {
-        for (int k = 0; k < numOfOutputs; k++) {
-            deltaOutput[k] = isBinary ? singleError[k] * outputLayer[k] * (1 - outputLayer[k]) :
-                    singleError[k] * 0.5 * (1 - (outputLayer[k] * outputLayer[k]));
+            // Add the output bias
+            mOutputNeuronUnactivatedValues[outputNeuron] += (1.0 * mOutputNeuronBiasWeights[outputNeuron]);
+            // Apply the activation function to the weighted sum
+            mOutputNeuronValues[outputNeuron] = customSigmoid(mOutputNeuronUnactivatedValues[outputNeuron]);
         }
 
-        for (int k = 0; k < numOfOutputs; k++) {
-            for (int j = 0; j <= argNumHidden; j++) {
-                deltaW2[j][k] = momentum * deltaW2[j][k] + learningRate * deltaOutput[k] * hiddenLayer[j];
-                w2[j][k] += deltaW2[j][k];
-            }
-        }
-
-        for (int j = 0; j < argNumHidden; j++) {
-            deltaHidden[j] = 0;
-            for (int k = 0; k < numOfOutputs; k++) {
-                deltaHidden[j] += w2[j][k] * deltaOutput[k];
-            }
-            deltaHidden[j] = isBinary ? deltaHidden[j] * hiddenLayer[j] * (1 - hiddenLayer[j]) :
-                    deltaHidden[j] * 0.5 * (1 - (hiddenLayer[j] * hiddenLayer[j]));
-        }
-
-        for (int j = 0; j < argNumHidden; j++) {
-            for (int i = 0; i < argNumInputs + 1; i++) {
-                deltaW1[i][j] = momentum * deltaW1[i][j] + learningRate * deltaHidden[j] * inputLayer[i];
-                w1[i][j] += deltaW1[i][j];
-            }
-        }
-
-    }
-
-    public int train() {
-        int epoch = 0;
-        error.clear();
-
-        do {
-            for (int k = 0; k < numOfOutputs; k++) {
-                totalError[k] = 0;
-            }
-            int numSamples = trainX.length;
-            for (int i = 0; i < numSamples; i++) {
-                double[] sample = trainX[i];
-                double[] sampleOutput = trainY[i];
-
-                forwardPropagation(sample);
-                calculateOutputErrors(sampleOutput);
-                backPropagation();
-            }
-
-            for (int k = 0; k < numOfOutputs; k++) totalError[k] /= 2;
-            error.add(Double.toString(totalError[0]));
-            epoch++;
-            System.out.println(epoch + "\t" + totalError[0]);
-        } while (totalError[0] > errorThreshold);
-
-        return epoch;
-    }
-
-    @Override
-    public double outputFor(double[] X) {
-        forwardPropagation(X);
-        return outputLayer[0];
-    }
-
-    @Override
-    public double train(double[] X, double argValue) {
-        forwardPropagation(X);
-        return argValue - outputLayer[0];
+        return mOutputNeuronValues[0];
     }
 
     @Override
     public void save(File argFile) {
-        try {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < w1.length; i++) {
-                for (int j = 0; j < w1[0].length; j++) {
-                    builder.append(w1[i][j] + " ");
-                }
-                builder.append("\n");
-            }
-            builder.append("\n");
-            for (int i = 0; i < w2.length; i++) {
-                for (int j = 0; j < w2[0].length; j++) {
-                    builder.append(w2[i][j] + " ");
-                }
-                builder.append("\n");
-            }
-            Files.write(argFile.toPath(), builder.toString().getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override
     public void load(String argFileName) throws IOException {
-        Scanner sc = new Scanner(new BufferedReader(new FileReader(argFileName)));
-        double[][] w1 = new double[argNumInputs + 1][argNumHidden];
-        double[][] w2 = new double[argNumHidden + 1][numOfOutputs];
-        boolean readingW1 = true;
-        int lineIndex = 0;
-        while (sc.hasNextLine()) {
-            if (readingW1) {
-                String[] line = sc.nextLine().trim().split(" ");
-                if (line[0].length() == 0) {
-                    readingW1 = false;
-                    lineIndex = 0;
-                    continue;
+
+    }
+
+    /**
+     * This method calculates the error based on the current input & output.
+     * It is expected that outputFor has been called before this method call.
+     * @param expectedValue The expected output value for the current input
+     */
+    private void calculateErrors(double expectedValue)
+    {
+        int hiddenNeuron, outputNeuron, outputNeuronIndex;
+        double summedWeightedErrors;
+
+        for(outputNeuron = 0; outputNeuron < mNumOutputs; outputNeuron++)
+        {
+            // Calculate the output error from the feed forward
+            mOutputNeuronErrors[outputNeuron] = (expectedValue - mOutputNeuronValues[outputNeuron]) * customSigmoidDerivative(mOutputNeuronUnactivatedValues[outputNeuron]);
+
+            // Backpropagate the output error
+            for(hiddenNeuron = 0; hiddenNeuron < mNumHiddenNeurons; hiddenNeuron++)
+            {
+                summedWeightedErrors = 0.0;
+
+                // Sum all of the output neuron errors * hidden neuron weights
+                for(outputNeuronIndex = 0; outputNeuronIndex < mNumOutputs; outputNeuronIndex++)
+                {
+                    summedWeightedErrors += mOutputNeuronErrors[outputNeuronIndex] * mOutputNeuronWeights[outputNeuronIndex][hiddenNeuron];
                 }
-                for (int j = 0; j < line.length; j++) {
-                    w1[lineIndex][j] = Double.parseDouble(line[j]);
-                }
-                lineIndex++;
-            } else {
-                String[] line = sc.nextLine().trim().split(" ");
-                if (line[0].length() == 0) {
-                    break;
-                }
-                for (int j = 0; j < line.length; j++) {
-                    w2[lineIndex][j] = Double.parseDouble(line[j]);
-                }
-                lineIndex++;
+                // Multiply weighted sum with derivative of activation
+                mHiddenNeuronErrors[hiddenNeuron] = summedWeightedErrors * customSigmoidDerivative(mHiddenNeuronUnactivatedOutputs[hiddenNeuron]);
             }
         }
     }
 
-    public void saveError(File argFile) {
-        try {
-            Files.write(Paths.get(argFile.getPath()), error);
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * This method will tell the NN the output
+     * value that should be mapped to the given input vector. I.e.
+     * the desired correct output value for an input.
+     *
+     * @param trainX The training set
+     * @return The error in the output for that input vector
+     */
+    public double train(double[] trainX, double trainY)
+    {
+        int i;
+        double[] errors = new double[mNumOutputs];
+
+        // Feed forward stage: calculate the output value
+        // this will update the neuron outputs
+        outputFor(trainX);
+
+        // Calculate errors
+        calculateErrors(trainY);
+
+        // perform weight update
+        updateWeights();
+
+        for(i = 0; i < mNumOutputs; i++)
+        {
+            errors[i] = trainY - mOutputNeuronValues[i];
         }
+
+        // Return the errors in the outputs from what we expected
+        return Arrays.stream(errors).sum();
     }
 }
