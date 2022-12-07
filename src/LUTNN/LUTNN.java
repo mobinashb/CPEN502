@@ -1,8 +1,11 @@
 package LUTNN;
 
+import LUT.Action;
+import LUT.LUTUtils;
 import NN.NeuralNet;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class LUTNN {
     public static final String FILENAME = "./data.csv";
@@ -23,33 +26,36 @@ public class LUTNN {
         momentumTerm = 0.9;
         numHidden = 28;
 
-        try {
-            numTrainSet = load(trainInput, trainOutput);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        NeuralNet lutNN = new NeuralNet(14, 1, numHidden, learningRate, momentumTerm, -1, 1, -0.5, 0.5);
-        lutNN.initializeWeights();
-
-        for (int t = 0; t < numTrial; t++) {
-
-            double RMSError = 1;
-            while (RMSError > errorThreshold){
-                totalError = 0;
-
-                for (int i = 0; i < numTrainSet; i++) {
-                    totalError += Math.pow(lutNN.getError(trainInput[i], trainOutput[i]), 2);
-                }
-
-                RMSError = Math.sqrt(totalError / numTrainSet);
-                System.out.println(RMSError);
-
-                for (int i = 0; i < numTrainSet; i++) {
-                    lutNN.train(trainInput[i], trainOutput[i]);
-                }
-            }
-        }
+//        try {
+//            numTrainSet = load(trainInput, trainOutput);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        NeuralNet lutNN = new NeuralNet(14, 1, numHidden, learningRate, momentumTerm, -1, 1, -0.5, 0.5);
+//        lutNN.initializeWeights();
+//
+//        for (int t = 0; t < numTrial; t++) {
+//
+//            double RMSError = 1;
+//            while (RMSError > errorThreshold){
+//                totalError = 0;
+//
+//                for (int i = 0; i < numTrainSet; i++) {
+//                    totalError += Math.pow(lutNN.getError(trainInput[i], trainOutput[i]), 2);
+//                }
+//
+//                RMSError = Math.sqrt(totalError / numTrainSet);
+//                System.out.println(RMSError);
+//
+//                for (int i = 0; i < numTrainSet; i++) {
+//                    lutNN.train(trainInput[i], trainOutput[i]);
+//                }
+//            }
+//        }
+        double[] testOneHot = LUTUtils.oneHotEncoding(6, 7);
+        double[] stateAction = getStateActionPair(testOneHot, 2);
+        System.out.println(Arrays.toString(stateAction));
     }
 
     public static double[][] convertTo2d(double[] array) {
@@ -58,6 +64,21 @@ public class LUTNN {
             res[i] = new double[]{array[i]};
         }
         return res;
+    }
+
+    public static double[] getStateActionPair(double[] state, int action) {
+        double[] oneHotAction = LUTUtils.oneHotEncoding(action, Action.ROBOT_NUM_ACTIONS);
+
+        int sLen = state.length;
+        int aLen = oneHotAction.length;
+
+        double[] stateAction = new double[sLen + aLen];
+        for (int i = 0; i < sLen; i++)
+            stateAction[i] = state[i];
+        for (int i = 0; i < aLen; i++)
+            stateAction[sLen + i] = oneHotAction[i];
+
+        return stateAction;
     }
 
     /**

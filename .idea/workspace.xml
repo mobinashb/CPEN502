@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="remove redundant condition in writeLog">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/robocode2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CPEN502.iml" beforeDir="false" afterPath="$PROJECT_DIR$/CPEN502.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/robots/robot.database" beforeDir="false" afterPath="$PROJECT_DIR$/robots/robot.database" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUTNN/LUTNN.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUTNN/LUTNN.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LUTNN/RLRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUTNN/RLRobot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/NN/NeuralNet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NN/NeuralNet.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,18 +58,6 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
   <component name="RunManager" selected="Application.Robocode">
     <configuration name="LUTNN" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="LUTNN.LUTNN" />
@@ -96,7 +85,7 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -150,9 +139,7 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>

@@ -26,7 +26,7 @@ public class RLRobot extends AdvancedRobot {
     private static final double NN_ALPHA = 0.1;
     private static final double NN_GAMMA = 0.5;
     private static final double NN_EXPLORATION_RATE = 0.0;
-    private static final int PERIOD = 200;
+    private static final int PERIOD = 20;
     private static final int MEMORY_N = 10;
     private Enemy enemy;
     private double reward = 0.0;
@@ -37,7 +37,7 @@ public class RLRobot extends AdvancedRobot {
     public static double enemyBearing;
     public static NeuralNet nn = new NeuralNet(NUM_INPUT_LAYERS, NUM_OUTPUT_LAYERS, NUM_HIDDEN_LAYERS, NN_LEARNING_RATE, NN_MOMENTUM,-1, 1, -0.5, 0.5);
 //    public static ReplayMemory<Experience> memory = new ReplayMemory<>(MEMORY_N);
-    private double[] NNPrevState = new double[5];
+    private double[] NNPrevState = new double[7];
     private int NNPrevAction = 0;
     private static int numRounds = 0;
     private static int winRounds = 0;
@@ -98,13 +98,15 @@ public class RLRobot extends AdvancedRobot {
     }
 
     public int getNNAction(double heading, double distance, double bearing, double reward) {
-        double[] NNCurrStates = new double[5];
+        double[] NNCurrStates = new double[7];
         NNCurrStates[0] = heading % 180;
         NNCurrStates[1] = distance % 10000;
         NNCurrStates[2] = bearing % Math.PI;
         NNCurrStates[3] = isHitByBullet;
         NNCurrStates[4] = isHitWall;
-        //TODO: append robot energy and enemy energy to the definition of state + change the length of state from 5 to 7
+        NNCurrStates[5] = getEnergy() / 100 * 5;
+        NNCurrStates[6] = enemy.energy / 100 * 5;
+
         int nextAction = getMaxAction(NNCurrStates);
 
         double NN_NewVal = nn.outputFor(getStateActionPair(NNCurrStates, nextAction));
@@ -296,6 +298,7 @@ public class RLRobot extends AdvancedRobot {
                 RobocodeFileWriter fileWriter = new RobocodeFileWriter(file.getAbsolutePath(), true);
                 RMS_Error = Math.sqrt(RMS_Error/numRounds);
                 fileWriter.write(String.format("round: %s score: %s RMS error: %s\n", round, winRate, RMS_Error));
+                RMS_Error = 0;
                 fileWriter.close();
             } catch(Exception e) {
                 System.out.println(e);

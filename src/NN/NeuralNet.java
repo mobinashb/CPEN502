@@ -2,11 +2,14 @@ package NN;
 
 import Interfaces.NeuralNetInterface;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * A simple neural network with one hidden layer,
@@ -348,16 +351,6 @@ public class NeuralNet implements NeuralNetInterface
         return mOutputNeuronValues[0];
     }
 
-    @Override
-    public void save(File argFile) {
-
-    }
-
-    @Override
-    public void load(String argFileName) throws IOException {
-
-    }
-
     /**
      * This method calculates the error based on the current input & output.
      * It is expected that outputFor has been called before this method call.
@@ -433,5 +426,60 @@ public class NeuralNet implements NeuralNetInterface
         }
 
         return Arrays.stream(errors).sum();
+    }
+
+    @Override
+    public void save(File argFile) {
+//        try {
+//            StringBuilder builder = new StringBuilder();
+//            for (int i = 0; i < w1.length; i++) {
+//                for (int j = 0; j < w1[0].length; j++) {
+//                    builder.append(w1[i][j] + " ");
+//                }
+//                builder.append("\n");
+//            }
+//            builder.append("\n");
+//            for (int i = 0; i < w2.length; i++) {
+//                for (int j = 0; j < w2[0].length; j++) {
+//                    builder.append(w2[i][j] + " ");
+//                }
+//                builder.append("\n");
+//            }
+//            Files.write(argFile.toPath(), builder.toString().getBytes());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    @Override
+    public void load(String argFileName) throws IOException {
+//        Scanner sc = new Scanner(new BufferedReader(new FileReader("./weights.txt")));
+//        double[][] w1 = new double[mNumInputs + 1][mNumHiddenNeurons];
+//        double[][] w2 = new double[mNumHiddenNeurons + 1][mNumOutputs];
+//        boolean readingW1 = true;
+//        int lineIndex = 0;
+//        while (sc.hasNextLine()) {
+//            if (readingW1) {
+//                String[] line = sc.nextLine().trim().split(" ");
+//                if (line[0].length() == 0) {
+//                    readingW1 = false;
+//                    lineIndex = 0;
+//                    continue;
+//                }
+//                for (int j = 0; j < line.length; j++) {
+//                    w1[lineIndex][j] = Double.parseDouble(line[j]);
+//                }
+//                lineIndex++;
+//            } else {
+//                String[] line = sc.nextLine().trim().split(" ");
+//                if (line[0].length() == 0) {
+//                    break;
+//                }
+//                for (int j = 0; j < line.length; j++) {
+//                    w2[lineIndex][j] = Double.parseDouble(line[j]);
+//                }
+//                lineIndex++;
+//            }
+//        }
     }
 }
