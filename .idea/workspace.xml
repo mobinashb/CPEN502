@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="add LUT NN">
-      <change afterPath="$PROJECT_DIR$/src/RL/MyRobot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/RL/State.java" afterDir="false" />
+    <list default="true" id="cf842922-d48b-47d3-ac57-6b0eb23e805c" name="Default Changelist" comment="fix bug in logging">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/robocode1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/robocode.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/robocode.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/robots/robot.database" beforeDir="false" afterPath="$PROJECT_DIR$/robots/robot.database" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CPEN502.iml" beforeDir="false" afterPath="$PROJECT_DIR$/CPEN502.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LUTNN/LUTNN.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LUTNN/LUTNN.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/NN/NeuralNet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NN/NeuralNet.java" afterDir="false" />
@@ -42,14 +42,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;last_opened_file_path&quot;: &quot;/Users/mobina/Desktop/UBC/Fall2022/CPEN502/CPEN502&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "/Users/mobina/Desktop/UBC/Fall2022/CPEN502/CPEN502",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />

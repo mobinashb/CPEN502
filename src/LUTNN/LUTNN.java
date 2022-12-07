@@ -5,7 +5,7 @@ import NN.NeuralNet;
 import java.io.*;
 
 public class LUTNN {
-    public static final String FILENAME = "/Users/mobina/Desktop/UBC/Fall2022/CPEN502/CPEN502/data.csv";
+    public static final String FILENAME = "./data.csv";
     public static void main(String[] args) {
         double totalError;
         double errorThreshold = 0.07;
@@ -34,16 +34,21 @@ public class LUTNN {
 
         for (int t = 0; t < numTrial; t++) {
 
-            double RMSError;
-            do {
+            double RMSError = 1;
+            while (RMSError > errorThreshold){
                 totalError = 0;
 
                 for (int i = 0; i < numTrainSet; i++) {
-                    totalError += Math.pow(lutNN.train(trainInput[i], trainOutput[i]), 2);
+                    totalError += Math.pow(lutNN.getError(trainInput[i], trainOutput[i]), 2);
                 }
+
                 RMSError = Math.sqrt(totalError / numTrainSet);
                 System.out.println(RMSError);
-            } while (RMSError > errorThreshold);
+
+                for (int i = 0; i < numTrainSet; i++) {
+                    lutNN.train(trainInput[i], trainOutput[i]);
+                }
+            }
         }
     }
 

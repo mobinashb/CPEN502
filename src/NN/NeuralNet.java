@@ -420,4 +420,18 @@ public class NeuralNet implements NeuralNetInterface
         // Return the errors in the outputs from what we expected
         return Arrays.stream(errors).sum();
     }
+
+    public double getError(double[] trainX, double trainY) {
+        double[] errors = new double[mNumOutputs];
+
+        outputFor(trainX);
+        calculateErrors(trainY);
+
+        for(int i = 0; i < mNumOutputs; i++)
+        {
+            errors[i] = trainY - mOutputNeuronValues[i];
+        }
+
+        return Arrays.stream(errors).sum();
+    }
 }
