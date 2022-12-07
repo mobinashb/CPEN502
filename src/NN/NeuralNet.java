@@ -17,7 +17,7 @@ public class NeuralNet implements NeuralNetInterface
 {
     // Constants
     private static final int MAX_HIDDEN_NEURONS = 1000;
-    private static final int MAX_INPUTS =         14;
+    private static final int MAX_INPUTS =         15;
     private static final int MAX_OUTPUTS =        7;
 
     // Private member variables

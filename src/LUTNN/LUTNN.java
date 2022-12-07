@@ -8,7 +8,7 @@ public class LUTNN {
     public static final String FILENAME = "/Users/mobina/Desktop/UBC/Fall2022/CPEN502/CPEN502/data.csv";
     public static void main(String[] args) {
         double totalError;
-        double errorThreshold = 0.05;
+        double errorThreshold = 0.07;
 
         int maxTrainSet = 112000;
         int numTrainSet = 0;
