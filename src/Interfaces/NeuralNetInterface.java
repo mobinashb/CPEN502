@@ -1,9 +1,13 @@
+package Interfaces;
+
+import Interfaces.CommonInterface;
+
 /**
  * @date 20 June 2012
  * @author sarbjit
  *
  */
-public interface NeuralNetInterface extends CommonInterface{
+public interface NeuralNetInterface extends CommonInterface {
     final double bias = 1.0; // The input for each neurons bias weight
     /**
      * Constructor. (Cannot be declared in an interface, but your implementation will need one)
@@ -13,7 +17,7 @@ public interface NeuralNetInterface extends CommonInterface{
      * @param argMomentumTerm The momentum coefficient
      * @param argA Integer lower bound of sigmoid used by the output neuron only.
      * @param arbB Integer upper bound of sigmoid used by the output neuron only.
-    public abstract NeuralNet (
+    public abstract NN.NeuralNet (
         int argNumInputs,
         int argNumHidden,
         double argLearningRate,
@@ -45,4 +49,4 @@ public interface NeuralNetInterface extends CommonInterface{
      * Initialize the weights to 0.
      */
     public void zeroWeights();
-} // End of public interface NeuralNetInterface
+} // End of public interface Interfaces.NeuralNetInterface
