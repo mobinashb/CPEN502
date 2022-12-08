@@ -25,7 +25,7 @@ public class RLRobot extends AdvancedRobot {
     private static final double NN_MOMENTUM = 0.9;
     private static final double NN_ALPHA = 0.1;
     private static final double NN_GAMMA = 0.5;
-    private static final double NN_EXPLORATION_RATE = 0.0;
+    private static final double NN_EXPLORATION_RATE = 0.8;
     private static final int PERIOD = 20;
     private static final int MEMORY_N = 10;
     private Enemy enemy;
@@ -130,7 +130,7 @@ public class RLRobot extends AdvancedRobot {
             NNPrevState[i] = NNCurrStates[i];
         }
         NNPrevAction = nextAction;
-        if(Math.random() < NN_EXPLORATION_RATE) {
+        if(numRounds < 20000 && Math.random() < NN_EXPLORATION_RATE) {
             return (int)(Math.random() * Action.ROBOT_NUM_ACTIONS);
         }
         return nextAction;

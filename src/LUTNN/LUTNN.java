@@ -58,14 +58,6 @@ public class LUTNN {
         System.out.println(Arrays.toString(stateAction));
     }
 
-    public static double[][] convertTo2d(double[] array) {
-        double[][] res = new double[array.length][1];
-        for (int i = 0; i < array.length; i++) {
-            res[i] = new double[]{array[i]};
-        }
-        return res;
-    }
-
     public static double[] getStateActionPair(double[] state, int action) {
         double[] oneHotAction = LUTUtils.oneHotEncoding(action, Action.ROBOT_NUM_ACTIONS);
 
