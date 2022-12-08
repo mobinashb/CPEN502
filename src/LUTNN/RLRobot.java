@@ -11,7 +11,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 
 public class RLRobot extends AdvancedRobot {
-    private static final boolean RECORD_MEMORY = false;
+    private static final boolean RECORD_MEMORY = true;
     private static final double BASE_DISTANCE = 400.0;
     private static final double IMMEDIATE_REWARD = 5;
     private static final double TERMINAL_REWARD = 15;
@@ -36,7 +36,7 @@ public class RLRobot extends AdvancedRobot {
     int action;
     public static double enemyBearing;
     public static NeuralNet nn = new NeuralNet(NUM_INPUT_LAYERS, NUM_OUTPUT_LAYERS, NUM_HIDDEN_LAYERS, NN_LEARNING_RATE, NN_MOMENTUM,-1, 1, -0.5, 0.5);
-//    public static ReplayMemory<Experience> memory = new ReplayMemory<>(MEMORY_N);
+    public static ReplayMemory<Experience> memory = new ReplayMemory<Experience>(MEMORY_N);
     private double[] NNPrevState = new double[7];
     private int NNPrevAction = 0;
     private static int numRounds = 0;
@@ -45,12 +45,8 @@ public class RLRobot extends AdvancedRobot {
     private static String weightFilePath = "nn_weights.txt";;
     private File weightFile;
     private double RMS_Error = 0.0d;
-    private double totalError = 0.0d;
 
     public void run() {
-//        if(numRounds > 0) {
-//            loadNN_Weights();
-//        }
         loadNN_Weights();
         enemy = new Enemy("enemy");
         enemy.distance = 10000;
@@ -114,18 +110,17 @@ public class RLRobot extends AdvancedRobot {
                 ;
         double error = NN_ALPHA * (reward + NN_GAMMA * NN_NewVal - NN_PrevVal);
         RMS_Error += error*error;
-        //totalError += error*error/2;
 
         double NN_CorrectPrevVal = NN_PrevVal + error;
         nn.train(getStateActionPair(NNPrevState, NNPrevAction), NN_CorrectPrevVal);
-//        if(RECORD_MEMORY) {
-//            Experience e = new Experience();
-//            e.currState = NNPrevState;
-//            e.action = NNPrevAction;
-//            e.reward = reward;
-//            e.nextState = NNCurrStates;
-//            memory.add(e);
-//        }
+        if(RECORD_MEMORY) {
+            Experience e = new Experience();
+            e.currState = NNPrevState;
+            e.action = NNPrevAction;
+            e.reward = reward;
+            e.nextState = NNCurrStates;
+            memory.add(e);
+        }
         for(int i=0; i<NUM_INPUT_LAYERS; i++) {
             NNPrevState[i] = NNCurrStates[i];
         }
@@ -134,6 +129,18 @@ public class RLRobot extends AdvancedRobot {
             return (int)(Math.random() * Action.ROBOT_NUM_ACTIONS);
         }
         return nextAction;
+    }
+
+    public void trainReplayMemory() {
+        Object[] experiences = memory.randomSample(MEMORY_N/2);
+        for(Object e: experiences) {
+            Experience x = (Experience) e;
+            double NN_NewVal = nn.outputFor(x.nextState);
+            double NN_PrevVal = nn.outputFor(x.currState);
+            double error = NN_ALPHA * (x.reward + NN_GAMMA * NN_NewVal - NN_PrevVal);
+            double NN_CorrectPrevVal = NN_PrevVal + error;
+            nn.train(x.currState, NN_CorrectPrevVal);
+        }
     }
 
     public void radarMovement() {
@@ -165,7 +172,6 @@ public class RLRobot extends AdvancedRobot {
                 setTurnRight(Action.ROBOT_TURN_DEGREE);
                 break;
             case Action.ROBOT_FIRE:
-                //turnGunRight(getHeading() - getGunHeading() + enemyBearing);
                 setFire(firePower);
                 break;
         }
@@ -231,14 +237,14 @@ public class RLRobot extends AdvancedRobot {
     public void onBulletHit(BulletHitEvent e) {
         reward += IMMEDIATE_REWARD;
         getNNAction(getHeading(), enemy.distance, enemy.bearing, reward);
-        //trainReplayMemory();
+        trainReplayMemory();
     }
 
     public void onHitByBullet(HitByBulletEvent e) {
         isHitByBullet = 1;
         reward += IMMEDIATE_FINE;
         getNNAction(getHeading(), enemy.distance, enemy.bearing, reward);
-        //trainReplayMemory();
+        trainReplayMemory();
     }
 
     public void onBulletMissed(BulletMissedEvent e) {
@@ -259,7 +265,6 @@ public class RLRobot extends AdvancedRobot {
 
     public void onDeath(DeathEvent event) {
         numRounds++;
-//        Statistics.saveScore(0);
         getNNAction(getHeading(), enemy.distance, enemy.bearing, TERMINAL_FINE);
         recordScores();
         saveNN_Weights();
@@ -268,24 +273,10 @@ public class RLRobot extends AdvancedRobot {
     public void onWin(WinEvent event) {
         numRounds++;
         winRounds++;
-//        Statistics.saveScore(1);
         getNNAction(getHeading(), enemy.distance, enemy.bearing, TERMINAL_REWARD);
         recordScores();
         saveNN_Weights();
     }
-
-//    public void trainReplayMemory() {
-//        Object[] experiences = memory.randomSample(MEMORY_N/2);
-//        for(Object e: experiences) {
-//            Experience x = (Experience) e;
-//            int nextAction = getMaxAction(x.currState);
-//            double NN_NewVal = nn[nextAction].outputFor(x.nextState);
-//            double NN_PrevVal = nn[x.action].outputFor(x.currState);
-//            double error = NN_ALPHA * (x.reward + NN_GAMMA * NN_NewVal - NN_PrevVal);
-//            double NN_CorrectPrevVal = NN_PrevVal + error;
-//            nn[action].train(x.currState, NN_CorrectPrevVal);
-//        }
-//    }
 
 
     public void recordScores() {
@@ -307,7 +298,6 @@ public class RLRobot extends AdvancedRobot {
     }
 
     public void onBattleEnded(BattleEndedEvent event) {
-//        Statistics.printWinRates();
     }
 
     public void saveNN_Weights() {
