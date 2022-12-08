@@ -11,7 +11,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 
 public class RLRobot extends AdvancedRobot {
-    private static final boolean RECORD_MEMORY = true;
+    private static final boolean RECORD_MEMORY = false;
     private static final double BASE_DISTANCE = 400.0;
     private static final double IMMEDIATE_REWARD = 5;
     private static final double TERMINAL_REWARD = 15;
@@ -21,13 +21,13 @@ public class RLRobot extends AdvancedRobot {
     private static final int NUM_INPUT_LAYERS = 5;
     private static final int NUM_HIDDEN_LAYERS = 10;
     private static final int NUM_OUTPUT_LAYERS = 1;
-    private static final double NN_LEARNING_RATE = 0.2;
+    private static final double NN_LEARNING_RATE = 0.01;
     private static final double NN_MOMENTUM = 0.9;
     private static final double NN_ALPHA = 0.1;
     private static final double NN_GAMMA = 0.5;
     private static final double NN_EXPLORATION_RATE = 0.8;
     private static final int PERIOD = 20;
-    private static final int MEMORY_N = 10;
+    private static final int MEMORY_N = -1;
     private Enemy enemy;
     private double reward = 0.0;
     private double firePower = 1;
@@ -41,13 +41,17 @@ public class RLRobot extends AdvancedRobot {
     private int NNPrevAction = 0;
     private static int numRounds = 0;
     private static int winRounds = 0;
-    private static String scoreListFile = "scoreList.txt";;
-    private static String weightFilePath = "nn_weights.txt";;
-    private File weightFile;
+    private static String scoreListFile = "scores.txt";;
+    private static String weightFilePath = "weights.txt";;
     private double RMS_Error = 0.0d;
 
+    private static boolean isFirstRun = true;
+
     public void run() {
-        loadNN_Weights();
+        if (isFirstRun) {
+            loadNN_Weights();
+            isFirstRun = false;
+        }
         enemy = new Enemy("enemy");
         enemy.distance = 10000;
 
@@ -237,14 +241,14 @@ public class RLRobot extends AdvancedRobot {
     public void onBulletHit(BulletHitEvent e) {
         reward += IMMEDIATE_REWARD;
         getNNAction(getHeading(), enemy.distance, enemy.bearing, reward);
-        trainReplayMemory();
+        if (RECORD_MEMORY) trainReplayMemory();
     }
 
     public void onHitByBullet(HitByBulletEvent e) {
         isHitByBullet = 1;
         reward += IMMEDIATE_FINE;
         getNNAction(getHeading(), enemy.distance, enemy.bearing, reward);
-        trainReplayMemory();
+        if (RECORD_MEMORY) trainReplayMemory();
     }
 
     public void onBulletMissed(BulletMissedEvent e) {
@@ -267,7 +271,7 @@ public class RLRobot extends AdvancedRobot {
         numRounds++;
         getNNAction(getHeading(), enemy.distance, enemy.bearing, TERMINAL_FINE);
         recordScores();
-        saveNN_Weights();
+//        saveNN_Weights();
     }
 
     public void onWin(WinEvent event) {
@@ -275,7 +279,7 @@ public class RLRobot extends AdvancedRobot {
         winRounds++;
         getNNAction(getHeading(), enemy.distance, enemy.bearing, TERMINAL_REWARD);
         recordScores();
-        saveNN_Weights();
+//        saveNN_Weights();
     }
 
 
@@ -301,13 +305,13 @@ public class RLRobot extends AdvancedRobot {
     }
 
     public void saveNN_Weights() {
-        weightFile = getDataFile(weightFilePath);
-        nn.save(weightFile);
+//        weightFile = getDataFile(weightFilePath);
+//        nn.save(weightFile);
     }
 
     public void loadNN_Weights() {
         try {
-            nn.load(weightFilePath);
+            nn.load(getDataFile(weightFilePath));
         } catch(Exception e) {
             System.out.println(e);
         }

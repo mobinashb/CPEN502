@@ -2,14 +2,10 @@ package NN;
 
 import Interfaces.NeuralNetInterface;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.Scanner;
 
 
 public class NeuralNet implements NeuralNetInterface
@@ -379,9 +375,84 @@ public class NeuralNet implements NeuralNetInterface
 
     @Override
     public void save(File argFile) {
+        String[] strs = new String[2];
+        strs[0] = "";
+        strs[1] = "";
+        int i, j;
+
+        for(i = 0; i < numHiddenNeurons; i++)
+        {
+            for(j = 0; j < numInputs; j++)
+            {
+                strs[0] += inputWeights[i][j] + ",";
+            }
+        }
+
+        for(i = 0; i < numOutputs; i++)
+        {
+            for(j = 0; j < numHiddenNeurons; j++)
+            {
+
+                strs[1] += outputNeuronWeights[i][j] + ",";
+            }
+            strs[1] += outputNeuronBiasWeights[i];
+        }
+        try{
+            FileWriter fileWriter = new FileWriter(argFile);
+            fileWriter.write(strs[0] + "\r\n");
+            fileWriter.write(strs[1] + "\r\n");
+            fileWriter.close();
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
     }
 
     @Override
     public void load(String argFileName) throws IOException {
+
+    }
+
+    public void load(File file) throws IOException {
+        String[] strs = new String[2];
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            for(int i=0; i<2; i++) {
+                try {
+                    strs[i] = br.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String[] weights_input = Arrays.stream(strs[0].split(",")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
+        String[] weights_output = Arrays.stream(strs[1].split(",")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
+
+        int id = 0;
+        for(int i = 0; i < numHiddenNeurons; i++)
+        {
+            for(int j = 0; j < numInputs; j++)
+            {
+                inputWeights[i][j] = Double.parseDouble(weights_input[id]);
+                id++;
+            }
+        }
+
+        id = 0;
+        for(int i = 0; i < numOutputs; i++)
+        {
+            for(int j = 0; j < numHiddenNeurons; j++)
+            {
+                outputNeuronWeights[i][j] = Double.parseDouble(weights_output[id]);
+                id++;
+            }
+            outputNeuronBiasWeights[i] = Double.parseDouble(weights_output[id]);
+            id++;
+        }
+
     }
 }
