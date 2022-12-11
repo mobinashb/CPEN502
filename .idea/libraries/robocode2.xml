@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="robocode2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../robocode-1.9.4.7-setup/libs/robocode.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

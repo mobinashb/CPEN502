@@ -2,3 +2,5 @@ config
 out
 *-weights.txt
 *-trainingErrors.txt
+.DS_STORE
+.idea
